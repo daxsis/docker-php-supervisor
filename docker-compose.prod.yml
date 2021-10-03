@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+        php:
+                image: test-docker4laravel-php
+                environment:
+                        APP_DEBUG: "true"
+                        APP_KEY: "${APP_KEY}"
+        web:
+                image: test-docker4laravel-node
+                ports:
+                        - "80:80"
+        node:
+                image: node:16
+                user: node
+                working_dir: /assets
+                volumes:
+                        - ./src:/assets
+                command: npm run watch
+
+        db:
+                image: mariadb:10.6
+                environment:
+                        MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+                        MYSQL_ROOT_HOST: "%"
+                        MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+                        MYSQL_DATABASE: "${DB_DATABASE}"
+                        MYSQL_USER: "${DB_USERNAME}"
+                        MYSQL_PASSWORD: "${DB_PASSWORD}"
+                volumes:
+                        - mysqldata:/var/lib/mysql
+        redis:
+                image: redis
+                volumes:
+                        - redisdata:/data
+volumes:
+        mysqldata:
+        redisdata:
